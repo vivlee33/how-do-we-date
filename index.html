@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card catalog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #2B1420;
+    --ink-deep: #1C0C14;
+    --ribbon: #C0435A;
+    --ribbon-dark: #8F2E42;
+    --paper: #FBEEE6;
+    --paper-shadow: #EAD2C4;
+    --gold: #CFA349;
+    --gold-soft: #E4C98A;
+    --text-ink: #442A28;
+    --text-faint: #A9877E;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--ink);
+    background-image:
+      radial-gradient(ellipse at 50% -10%, #4A2036 0%, var(--ink) 55%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6vh 20px 8vh;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--paper);
+  }
+
+  .heading {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 30px;
+    letter-spacing: 0.01em;
+    color: var(--gold-soft);
+    margin: 0 0 4px;
+    text-align: center;
+  }
+
+  .subheading {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #C79A9F;
+    margin: 0 0 40px;
+    text-align: center;
+  }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    max-width: min(460px, 92vw);
+    margin-bottom: 26px;
+  }
+
+  .tab {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: #E4B9C0;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(228,201,138,0.35);
+    border-radius: 20px;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .tab:hover { background: rgba(255,255,255,0.12); }
+  .tab.active {
+    background: var(--gold-soft);
+    color: var(--ink-deep);
+    border-color: var(--gold-soft);
+    font-weight: 500;
+  }
+  .tab:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 2px; }
+
+  .stage {
+    position: relative;
+    width: min(420px, 90vw);
+    perspective: 1200px;
+  }
+
+  /* a satin ribbon tied beneath the card, like a love letter or gift */
+  .rail {
+    position: absolute;
+    left: 50%;
+    bottom: -16px;
+    transform: translateX(-50%);
+    width: 74%;
+    height: 14px;
+    background: linear-gradient(180deg, var(--ribbon) 0%, var(--ribbon-dark) 100%);
+    border-radius: 2px;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.4);
+  }
+  .rail::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 26px;
+    height: 26px;
+    background: var(--ribbon-dark);
+    border: 1.5px solid var(--gold-soft);
+    border-radius: 50%;
+  }
+
+  .card {
+    position: relative;
+    background: var(--paper);
+    border-radius: 16px;
+    padding: 48px 36px 42px;
+    min-height: 260px;
+    box-shadow:
+      0 2px 0 var(--paper-shadow),
+      0 20px 44px rgba(30,6,16,0.55);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transform-origin: center;
+  }
+
+  .card.dealing {
+    animation: deal 0.42s ease-out;
+  }
+  @keyframes deal {
+    0%   { transform: rotateY(-12deg) translateX(-18px) scale(0.97); opacity: 0.4; }
+    60%  { transform: rotateY(4deg) translateX(4px) scale(1.01); opacity: 1; }
+    100% { transform: rotateY(0deg) translateX(0) scale(1); opacity: 1; }
+  }
+
+  .heart {
+    position: absolute;
+    top: 22px;
+    left: 26px;
+    width: 24px;
+    height: 24px;
+    color: var(--ribbon);
+  }
+  .heart svg { width: 100%; height: 100%; display: block; }
+
+  .stamp {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 3px 10px;
+    opacity: 0.85;
+    text-transform: uppercase;
+  }
+
+  .question {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 21px;
+    line-height: 1.55;
+    color: var(--text-ink);
+    text-align: left;
+    margin: 0;
+  }
+
+  .controls {
+    margin-top: 54px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .pull-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-deep);
+    background: var(--gold-soft);
+    border: none;
+    border-radius: 24px;
+    padding: 14px 32px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #A9853E, 0 10px 20px rgba(30,6,16,0.45);
+    transition: transform 0.08s ease;
+  }
+  .pull-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #A9853E, 0 5px 12px rgba(30,6,16,0.4);
+  }
+  .pull-btn:focus-visible {
+    outline: 2px solid var(--gold-soft);
+    outline-offset: 3px;
+  }
+
+  .deck-status {
+    font-size: 11px;
+    color: #B4939A;
+    letter-spacing: 0.03em;
+  }
+  .deck-status button {
+    background: none;
+    border: none;
+    color: #9AA5BE;
+    text-decoration: underline;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+  }
+
+  input[type="file"] { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card.dealing { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+  <p class="heading">connection questions</p>
+  <p class="subheading">draw one question at a time</p>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="stage">
+    <div class="rail"></div>
+    <div class="card" id="card">
+      <div class="heart">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 21s-6.7-4.35-9.3-8.1C.8 10.1 1.4 6.6 4.4 5.1c2.2-1.1 4.6-.3 6 1.6.6.8 1 1.5 1.6 2.4.6-.9 1-1.6 1.6-2.4 1.4-1.9 3.8-2.7 6-1.6 3 1.5 3.6 5 1.7 7.8C18.7 16.65 12 21 12 21z"/>
+        </svg>
+      </div>
+      <span class="stamp" id="stamp">sample</span>
+      <p class="question" id="question">Loading your deck…</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="pull-btn" id="pull-btn">Pull a card</button>
+    <span class="deck-status" id="deck-status">276 questions across 5 categories</span>
+  </div>
+
+<script>
+  const CATEGORIES = {"How Do You See Me": ["What is one small thing that I do that you didn’t expect to like but you do?", "What is your favorite way I say your name or a nickname that I use?", "What is something about me that you always brag about to your friends?", "What is the first thing you notice when I walk into the room?", "What is something that I do that makes you laugh every single time?", "Name a non-physical thing about me that you love.", "What random thing instantly makes you think of me?", "If I were a warning label, what would it say?", "What phrase do I say that you can hear perfectly in your head?", "What weird thing did you start doing because of me?", "What was the moment that you realized I wasn’t just another person to you?", "What is something that you learned about me later in our relationship that actually made you like me more?", "What part of my personality surprised you the most?", "What version of me do you like the most or find the most attractive?", "What’s something that I’ve said in passing that sticks with you?", "What is something about me handling the harder days that make you respect/love me more?", "What’s a situation where you’d trust my judgement over your own?", "What’s something meaningful you learned from me?", "What’s the most dramatic thing I do over something completely normal?", "What kind of support do you appreciate from me?", "What do I do that secretly grabs your attention?", "What’s something small I do that you appreciate a lot?", "What emoji reminds you of me?", "What’s one thing you’d miss about me if I disappeared for a week?", "If I disappeared tomorrow, what’s the first thing you’d do?", "What’s something I do that’s more impressive than I think?", "Is there anything you wish I did more often?", "How would you describe my face to someone who’s never met me?", "If I texted “don’t be mad,” what would you guess I did?", "What was the first thing you told your best friend about me?", "If you had to change my legal name, what would you call me?", "What is my red flag?", "If I got arrested, what would you think I got arrested for?", "If you lost me at the mall, which store would you check first?", "If I was yelling at someone in the street, what do you think would have happened?", "If I turned into an animal, what animal would I be?", "If I was on reality TV, what drama would I be involved in?", "If I started a cult, what would it be called and would you join?", "What meme would you use to describe me?", "What song would you pick to be my theme song?", "What quality of mine do you wish more people had?", "You have 60 seconds to make me cry for $1 million. How do you do it?", "What nickname do you secretly want to call me?", "What’s something you think I underestimate about myself?", "If I became rich overnight, what do you think is the first thing I’d buy?", "If I told you to come over and bring gloves, what would you assume we were doing?", "If you woke up and I was a goose but still clearly me, what would you do?", "If I revealed I was a witch or wizard this entire time, but never found the right moment to tell you, what would your reaction be?", "What’s something unhinged I do that you’ve somehow grown to love?", "What part of me scares you a little?", "When do you feel most proud to be with me?", "What did you expect me to judge you for, but I didn’t?", "What’s the nicest thing you’ve ever said about me to someone else?", "What’s something I do that you’d never admit you find cute?", "What’s a small way I turn you on without trying?"],
+                      "How Do You See You": ["If you lost your memory, who would you want to tell you who you are?", "What version of you do you think I fell in love with?", "What quirk or trait are you insecure with me learning about?", "Name something you’re really proud of.", "Would you rather have true love or $1 million?", "What’s your silliest pet peeve or ick?", "What animal do you think you would be and why?", "If you could swap lives with a cartoon character for a day, who would it be?", "What’s your silliest childhood fear?", "What’s something you hope never changes about you?", "What’s something small that makes you feel better without fail?", "When do you feel most like yourself?", "What moments make you feel quietly happy?", "What habit or routine do you secretly enjoy?", "What’s something you learned about yourself in the past year?", "What’s something that you appreciate more now than you used to?", "What’s something you’re learning to be ok with?", "If you could punch anyone, who would it be?", "What’s one lie you’re tempted to believe about yourself?", "What do you think I appreciate the most about you?", "What’s a compliment I give you that instantly makes you blush?", "What’s a lesson you’ve learned by being loved by me?", "What’s your most unhinged harmless opinion?", "If your life had a trailer, what would the voiceover be saying right now?", "What’s something you’re weirdly passionate about?", "What’s your current hyper-fixation?", "What’s a compliment that you received that you still remember?", "What totally normal thing gives you the ick?", "What’s something you’re convinced you could win a trophy for?", "What is your main character moment and what was the plot twist?", "What was your biggest “I can’t believe I did that” moment?", "What is your most specific oddly satisfying thing?", "What fact about you sounds fake?", "What is the weirdest thing you've ever bought?", "What is your favorite conspiracy theory?", "What’s something you always make time for, no matter how busy you are?", "What’s your go-to move when someone’s having a bad day?", "What was the last promise you kept for yourself?", "Do you believe in second chances?", "How do you define success?", "How do you define love?", "What’s the last thing you think about before bed?", "What was the highlight of your week?", "Is there something you’ve been really excited for?", "What’s a dream you want to share with me?", "What’s something small that makes you feel seen?", "What nickname do you secretly enjoy?", "What’s the dumbest thing you’ve ever argued about?", "What habit of yours do you wish you could delete?", "What childhood belief do you still hold onto?", "What’s something you thought you’d outgrow but you didn’t?", "What’s a fear you’ve learned to laugh at?", "What’s something you’d do more if nobody judged?", "What’s something people assume about you but are wrong about?", "What’s something we’ve never done, but you’re curious to try in bed?"],
+                      "How Do You See Us": ["What random memory of us always pops into your head?", "If we were stuck on a deserted island, who would survive longer?", "What’s a silly thing you hope never changes about us?", "If our relationship had its own holiday, how would people celebrate it?", "If we exchanged bodies, what’s the first thing you’d do as me?", "If our conversations were a podcast, what would the title be?", "If our relationship had a catchphrase, what would it be?", "What’s something you’re proud of us for?", "If our love story was a movie, what would the title be?", "What date was your favorite date?", "What’s something small between us that feels big?", "If our future depended on one promise, which promise would you make?", "If you had to describe our chemistry with a single word, what would it be?", "If we had a secret signal for “I’m in the mood to flirt with you,” what would it be?", "Is there anything in the relationship that feels one-sided?", "Is there anything in the past you still don’t want to share?", "If we missed our flight, what could we do to pass time at the airport?", "What’s your favorite version of us?", "If our love had a flavor, what would it taste like?", "If we could drop everything right now and go anywhere, where would we end up?", "If our story was a movie, what genre would it be?", "Which memory of us would you want to relive?", "What memory of us do you never want to forget?", "If we swapped roles for a day, what do you think you would struggle with the most? What would I struggle with the most?", "Who is more likely to become friends with random strangers they meet in public?", "Who is more likely to attempt to fix something around the house and make it worse?", "Who is more likely to suggest takeout instead of cooking?", "Who is more likely to laugh at a joke nobody else thinks is funny?", "Who is more likely to get distracted by something shiny or colorful?", "What story of us do you love sharing with people?", "If you could watch our last goodbye, would you press play?", "What part of our relationship do you think will hurt the most if it ends?", "What small thing about us do you appreciate?", "Is there a moment between us that has made you think “this is what safety feels like”?", "What do you think people are jealous of when they see us?", "If we woke up married in Vegas, what would your reaction be?", "Do you think we’d survive living in a tiny house together?", "If we had to live with your parents for a year, who do you think would snap first?", "When was your first “this feels right” moment between us?", "If we could teleport anywhere for dinner, where would we go?", "What’s our weirdest inside joke?", "Who would play us if there was a movie about us?", "What do you need more of from this relationship?", "What fantasy or daydream have you had about us recently?", "What's something we've taught each other without realizing it?", "What's one challenge we've handled better than you expected?", "What's something we bring out in each other that no one else does?", "If someone watched us for a week, what would they assume about our relationship?", "What's something we're surprisingly good at as a team?", "When do you think we're the strongest together?", "What's something we're completely opposite on that somehow works?", "If we had a relationship mascot, what would it be and why?", "What's one way we've both changed since meeting each other?", "What do you think future us will laugh about from today?", "If our relationship had a superpower, what would it be?", "What's one thing you hope never becomes \"normal\" between us because you always want it to feel special?"],
+                      "How Do You See The Future": ["What’s something new you want us to do together?", "What’s a version of life you hope you get to live someday?", "What’s a ridiculous thing we should add to our bucket list?", "If I asked you to move with me tomorrow, would you?", "What goals should we start working towards over the next 5 years?", "What’s a small goal you hope to achieve in 3 years?", "What’s a small tradition you’d love us to start?", "What trip do you want to take together?", "What’s something you hope to pass on to your kids one day?", "Is there a story about us that you would tell your kids?", "What do you want us to get better at?", "What's the dumbest purchase we'd probably make together?", "If we adopted an animal tomorrow, what would it be?", "What's a hobby you want us to accidentally become obsessed with?", "What city do you think we'd thrive in?", "What's one holiday you want us to make completely our own?", "If we opened a business together, what would we sell?", "What's one skill you'd love us to learn together?", "What's one place that feels like \"future us\"?", "If we could instantly master one activity together, what would you pick?", "What's one concert or event you'd love us to experience together?", "What's one ridiculous couples costume we have to wear someday?", "What's one tradition you hope our friends know us for?", "What kind of parent do you think you’ll be?", "If we had unlimited money for one year, what would we spend it on first?", "If we bought a house together, what's one unnecessary feature you'd insist on?", "What's one habit you'd love us to build together?", "What adventure do you think would change us?", "What do you hope we never stop doing for each other?", "How do you hope we handle disagreements five years from now?", "What's something you hope becomes easier for us over time?", "What kind of home feels happiest to you?", "What's something you hope we always make time for?", "What do you hope our weekends look like years from now?", "What's something you hope people notice about our relationship?", "What's one thing you'd like us to celebrate every year?", "How do you imagine us supporting each other during stressful seasons?", "What dream feels less scary because I'm in it?", "What life milestone are you most excited to experience with someone?", "What's something you hope we never lose even when life gets busy?", "What's one lesson you hope we keep learning together?", "What kind of parent do you hope to become?", "What do you hope I'll always feel safe telling you?", "What scares you most about the future?", "What excites you most about growing older together?", "What promise do you hope we never have to remind each other to keep?", "When life gets really hard, what do you hope our relationship feels like?", "What's one thing you hope we forgive each other for easily?", "What kind of legacy would you want us to leave together?", "What values do you hope define our future family?", "What do you hope people say about us fifty years from now?", "If we wrote a letter to our future selves, what would you want it to say?", "What's something you hope we still do when we're eighty?", "What's a fear about commitment you've never really talked about?", "What's one dream you'd only want to accomplish if we did it together?"],
+                      "Would You Rather...": ["Let me see your camera roll or Amazon order history?", "Let me see your ChatGPT history or notes app?", "Swap Spotify playlists or video playlists for a month?", "Cut your hair or do your taxes?", "Always be 10 minutes late or 40 minutes early?", "Share your location or texts forever?", "Go out every weekend or never leave the house?", "Argue about it immediately or wait 3-5 business days?", "Always choose what to watch or never choose again?", "Deep talks or doom scroll in silence every night?", "Relive our first date or best one?", "I was extremely clingy or extremely distant?", "Know everything on my mind or know absolutely nothing?", "Apologize first or wait for me to apologize?", "Fight once a week or never fight and never resolve anything?", "Always match outfits or never match?", "Only whisper or only shout for the rest of your life?", "Give up social media or coffee for a year?", "Always know the right thing to say or right thing to do?", "Always have a theme music or laugh track whenever you enter a room?", "Live in a place that’s always humid and busy or cold and deserted?", "Be close to me or be noticed by me?", "Hear my thoughts or read my mind?", "If we hadn’t met when we did, meet me earlier in life or later in life?", "Forget our first date or our first kiss?", "Never argue again or never apologize again?", "Stuck in traffic with me for 8 hours or stuck on a flight with me for 16?", "Win $1 million alone or $100k together?", "Switch phones or bank accounts for a week?", "Have matching tattoos or matching pajamas?", "Accidentally text my mom or accidentally text your boss?", "Be my passenger princess/prince forever or always be the driver?", "Only communicate through GIFs or voice notes for a week?", "Have our first dance interrupted or our proposal interrupted?", "Be on a reality dating show together or Amazing Race together?", "Lose every board game against me forever or never play games together?", "Only eat breakfast foods together or only eat desserts together?", "Have our relationship narrated by Morgan Freeman or David Attenborough?", "Spend 24 hours handcuffed together or 24 hours without phones?", "Always have matching phone wallpapers or matching lock screens?", "Have a pet that loves me more or loves you more?", "Receive a thoughtful gift every month or one incredible surprise every year?", "Have an extra hour talking every day or an extra vacation every year?", "Always know exactly how I'm feeling or always know exactly what I'm thinking?", "Have perfect communication or perfect timing?", "Be able to relive one happy memory together every year or create one guaranteed unforgettable new memory every year?", "Be completely honest all the time or always perfectly kind?", "Have five extra years together at the beginning of our relationship or the end?", "Be surprised by every date or plan every date together?", "Fall asleep cuddling every night or wake up together every morning?", "Have unlimited adventures but little routine, or a peaceful routine with occasional adventures?", "Kiss for five minutes or cuddle for an hour?", "Make out somewhere completely private or sneak one kiss somewhere you definitely shouldn't?", "Have incredible chemistry but terrible flirting or amazing flirting but awkward first kisses?", "Always have butterflies before seeing me or always feel completely at peace when you're with me?"]};
+
+  const CATEGORY_LABELS = {
+    "How Do You See Me": "Me",
+    "How Do You See You": "You",
+    "How Do You See Us": "Us",
+    "How Do You See The Future": "Future",
+    "Would You Rather...": "Would You Rather"
+  };
+
+  const categoryNames = Object.keys(CATEGORIES);
+  const totalCount = categoryNames.reduce((sum, c) => sum + CATEGORIES[c].length, 0);
+
+  let currentCategory = 'All';
+  let deck = buildDeck('All');
+  let lastIndex = -1;
+  let drawnCount = 0;
+
+  const cardEl = document.getElementById('card');
+  const questionEl = document.getElementById('question');
+  const stampEl = document.getElementById('stamp');
+  const statusEl = document.getElementById('deck-status');
+  const tabsEl = document.getElementById('tabs');
+
+  function buildDeck(category) {
+    if (category === 'All') {
+      return categoryNames.flatMap(c => CATEGORIES[c].map(q => ({ q, cat: c })));
+    }
+    return CATEGORIES[category].map(q => ({ q, cat: category }));
+  }
+
+  function renderTabs() {
+    const all = ['All', ...categoryNames];
+    tabsEl.innerHTML = '';
+    all.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'tab' + (cat === currentCategory ? ' active' : '');
+      btn.textContent = cat === 'All' ? 'All' : (CATEGORY_LABELS[cat] || cat);
+      btn.addEventListener('click', () => {
+        currentCategory = cat;
+        deck = buildDeck(cat);
+        lastIndex = -1;
+        renderTabs();
+        drawCard();
+      });
+      tabsEl.appendChild(btn);
+    });
+  }
+
+  function drawCard() {
+    if (!deck.length) return;
+    let idx = Math.floor(Math.random() * deck.length);
+    if (deck.length > 1) {
+      while (idx === lastIndex) idx = Math.floor(Math.random() * deck.length);
+    }
+    lastIndex = idx;
+    drawnCount++;
+
+    cardEl.classList.remove('dealing');
+    void cardEl.offsetWidth;
+    cardEl.classList.add('dealing');
+
+    const entry = deck[idx];
+    questionEl.textContent = entry.q;
+    stampEl.textContent = CATEGORY_LABELS[entry.cat] || entry.cat;
+  }
+
+  document.getElementById('pull-btn').addEventListener('click', drawCard);
+
+  statusEl.textContent = totalCount + ' questions across ' + categoryNames.length + ' categories';
+  renderTabs();
+  drawCard();
+</script>
+
+</body>
+</html>
